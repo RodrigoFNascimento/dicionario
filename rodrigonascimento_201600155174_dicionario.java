@@ -34,12 +34,15 @@ class Node {
      * Calculates the node's balance factor
      */
     public void setBalance() {
-        int leftBalance = left == null ? 0 : left.balance + 1;
-        int rightBalance = right == null ? 0 : right.balance + 1;
-        if (leftBalance < 0)
-            balance = leftBalance + rightBalance;
-        else
-            balance = rightBalance - leftBalance;
+        if (left == null && right == null) {
+            balance = 0;
+        } else if (right == null) {
+            balance = Math.abs(left.balance) - 1;
+        } else if (left == null) {
+            balance = Math.abs(right.balance) + 1;
+        } else {
+            balance = left.balance + right.balance;
+        }
     }
 
     /**
@@ -153,8 +156,37 @@ public class rodrigonascimento_201600155174_dicionario {
 
         root.setBalance();
 
-        // return the (unchanged) node pointer
-        return root; 
+        root = rotate(root);
+
+        return root;
+    }
+
+    /**
+     * If necessary, rotates the binary tree.
+     * @param root Root of the binary tree.
+     * @return Balanced tree.
+     */
+    private static Node rotate(Node root) {
+
+        if (root.balance == 2) {
+
+            if (root.right.balance == 1) {
+                root = rotateLeft(root);
+            } else if (root.right.balance == -1) {
+                root = rotateRightLeft(root);
+            }
+
+        } else if (root.balance == -2) {
+
+            if (root.left.balance == -1) {
+                root = rotateRight(root);
+            } else if (root.left.balance == 1) {
+                root = rotateLeftRight(root);
+            }
+
+        }
+
+        return root;
     }
 
     /**
@@ -167,6 +199,8 @@ public class rodrigonascimento_201600155174_dicionario {
         root.right = axis.left;
         axis.left = root;
         root = axis;
+
+        root.left.setBalance();
         root.setBalance();
         return root;
     }
@@ -181,6 +215,8 @@ public class rodrigonascimento_201600155174_dicionario {
         root.left = axis.right;
         axis.right = root;
         root = axis;
+
+        root.right.setBalance();
         root.setBalance();
         return root;
     }
@@ -191,8 +227,10 @@ public class rodrigonascimento_201600155174_dicionario {
      * @return Rotated tree.
      */
     private static Node rotateLeftRight(Node root) {
-        root = rotateLeft(root.left);
+        root.left = rotateLeft(root.left);
         root = rotateRight(root);
+
+        root.setBalance();
         return root;
     }
 
@@ -202,8 +240,10 @@ public class rodrigonascimento_201600155174_dicionario {
      * @return Rotated tree.
      */
     private static Node rotateRightLeft(Node root) {
-        root = rotateRight(root.right);
+        root.right = rotateRight(root.right);
         root = rotateLeft(root);
+
+        root.setBalance();
         return root;
     }
 
@@ -325,8 +365,6 @@ public class rodrigonascimento_201600155174_dicionario {
                 Node tempNode = processInputLine(reader.readLine());
                 insert(tempNode);
             }
-
-            System.out.println("d");
 
         } catch (Exception ex) {
             ex.printStackTrace();
