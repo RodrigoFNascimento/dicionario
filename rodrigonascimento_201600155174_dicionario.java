@@ -9,7 +9,7 @@ import java.io.PrintWriter;
 
 class Node {
     public String word;
-    public StringBuilder synonyms;
+    public String synonyms;
     public Node left;
     public Node right;
     public int balance;
@@ -22,7 +22,7 @@ class Node {
         this.balance = 0;
     }
 
-    public Node(String word, StringBuilder synonyms) {
+    public Node(String word, String synonyms) {
         this.word = word;
         this.synonyms = synonyms;
         this.left = null;
@@ -213,29 +213,19 @@ public class rodrigonascimento_201600155174_dicionario {
     private static Node processInputLine(String input) {
         int spaceIndex;
         String word;
-        int numberOfSynonyms;
 
         // Gets the word
         spaceIndex = input.indexOf(" ");
         word = input.substring(0, spaceIndex);
         input = input.substring(spaceIndex + 1);
 
-        // Gets the number of synonyms
+        // Removes the number of synonyms
         spaceIndex = input.indexOf(" ");
-        numberOfSynonyms = Integer.parseInt(input.substring(0, spaceIndex));
         input = input.substring(spaceIndex + 1);
         
         // Gets the synonyms
-        StringBuilder synonyms = new StringBuilder();
-        for (int i = 0; i < numberOfSynonyms; i++) {
-            spaceIndex = input.indexOf(" ");
-            if (spaceIndex == -1) {
-                synonyms.append(input.trim());
-            } else {
-                synonyms.append(input.substring(0, spaceIndex) + ",");
-                input = input.substring(spaceIndex + 1);
-            }
-        }
+        String synonyms = new String();
+        synonyms = input.replace(" ", ",");
 
         return new Node(word, synonyms);
     }
@@ -258,38 +248,9 @@ public class rodrigonascimento_201600155174_dicionario {
         }
     }
 
-    /**
-     * Writes content to file.
-     * @param fileName  Name of the file (with extension) to be writen.
-     * @param content   Content to be writen on the file.
-     * @throws FileNotFoundException
-     */
-    private static void writeToFile(String fileName, StringBuilder content) throws FileNotFoundException {
-
-        try(FileWriter fw = new FileWriter(fileName, true);
-            BufferedWriter bw = new BufferedWriter(fw);
-            PrintWriter out = new PrintWriter(bw))
-        {
-            out.print(content);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    /**
-     * Empties the content of a file.
-     * @param fileName Name of the file.
-     * @throws FileNotFoundException
-     */
-    private static void emptyFile(String fileName) throws FileNotFoundException {
-        new PrintWriter(fileName).close();
-    }
-
     public static void main(String[] args) {
         
         try (FileInputStream inputStream = new FileInputStream(args[0])) {
-
-            emptyFile(args[1]);
             
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
