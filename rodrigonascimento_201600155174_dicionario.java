@@ -15,8 +15,8 @@ class Node {
     public int balance;
 
     public Node() {
-        this.word = null;
-        this.synonyms = null;
+        this.word = "?";
+        this.synonyms = "-";
         this.left = null;
         this.right = null;
         this.balance = 0;
@@ -185,7 +185,7 @@ public class rodrigonascimento_201600155174_dicionario {
             throws FileNotFoundException {
 
         if (root == null) {
-            return null;
+            return new Node();
         }
 
         if (content.compareTo(root.word) < 0) {
@@ -268,15 +268,11 @@ public class rodrigonascimento_201600155174_dicionario {
 
             // Searchs for the words on the tree
             for (int i = 0; i < n; i++) {
+                
                 writeToFile(args[1], "[");
                 Node foundNode = search(tree, reader.readLine(), null, args[1]);
-                if (foundNode == null) {
-                    writeToFile(args[1], "?]\n");
-                    writeToFile(args[1], "-");
-                } else {
-                    writeToFile(args[1], foundNode.word + "]\n");
-                    writeToFile(args[1], foundNode.synonyms);
-                }
+                writeToFile(args[1], foundNode.word + "]\n");
+                writeToFile(args[1], foundNode.synonyms);
 
                 // Prints a line break only if the current line is not the final one
                 if (i < n - 1)
