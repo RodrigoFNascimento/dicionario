@@ -9,7 +9,7 @@ import java.io.PrintWriter;
 
 class Node {
     public String word;
-    public String[] synonyms;
+    public StringBuilder synonyms;
     public Node left;
     public Node right;
     public int balance;
@@ -22,7 +22,7 @@ class Node {
         this.balance = 0;
     }
 
-    public Node(String word, String[] synonyms) {
+    public Node(String word, StringBuilder synonyms) {
         this.word = word;
         this.synonyms = synonyms;
         this.left = null;
@@ -44,87 +44,11 @@ class Node {
             balance = left.balance + right.balance;
         }
     }
-
-    /**
-     * Adds all synonyms to a string in the output format.
-     * @return Output string
-     */
-    public StringBuilder getOutputString() {
-        StringBuilder output = new StringBuilder();
-
-        if (synonyms.length == 1) {
-            output.append(synonyms[0]);
-        } else {
-            for (int i = 0; i < synonyms.length - 1; i++) {
-                output.append(synonyms[i] + ",");
-            }
-            output.append(synonyms[synonyms.length - 1]);
-        }
-        
-        return output;
-    }
 }
 
 public class rodrigonascimento_201600155174_dicionario {
 
     private static Node tree = null;
-
-    /**
-     * Prints every node in the tree in the order: left, root, right.
-     * @param node Root of the tree.
-     * @throws FileNotFoundException
-     */
-    private static void printEPD(String fileName, Node node) throws FileNotFoundException {
-        if (node == null) 
-            return; 
-  
-        /* first recur on left child */
-        printEPD(fileName, node.left); 
-  
-        /* then print the data of node */
-        writeToFile(fileName, node.getOutputString()); 
-  
-        /* now recur on right child */
-        printEPD(fileName, node.right); 
-    }
-
-    /**
-     * Prints every node in the tree in the order: root, left, right.
-     * @param node Root of the tree.
-     * @throws FileNotFoundException
-     */
-    private static void printPED(String fileName, Node node) throws FileNotFoundException {
-        if (node == null) 
-            return; 
-  
-        /* first print data of node */
-        writeToFile(fileName, node.getOutputString() + " "); 
-  
-        /* then recur on left sutree */
-        printPED(fileName, node.left); 
-  
-        /* now recur on right subtree */
-        printPED(fileName, node.right);
-    }
-
-    /**
-     * Prints every node in the tree in the order: left, right, root.
-     * @param node Root of the tree.
-     * @throws FileNotFoundException
-     */
-    private static void printEDP(String fileName, Node node) throws FileNotFoundException {
-        if (node == null) 
-            return; 
-  
-        // first recur on left subtree 
-        printEDP(fileName, node.left); 
-  
-        // then recur on right subtree 
-        printEDP(fileName, node.right); 
-  
-        // now deal with the node 
-        writeToFile(fileName, node.getOutputString());
-    }
 
     /**
      * Inserts a new node into {@link #tree}.
@@ -248,6 +172,36 @@ public class rodrigonascimento_201600155174_dicionario {
     }
 
     /**
+     * Searchs a binary tree.
+     * @param root Root of the tree.
+     * @param content Content of the desired node.
+     * @param foundNode Node found by the search.
+     * @return Node where the content was found.
+     */
+    private static Node search(Node root, String content, Node foundNode) {
+
+        if (root == null) {
+            return null;
+        }
+
+        if (content.compareTo(root.word) < 0) {
+
+            System.out.print(root.word + "->");
+            foundNode = search(root.left, content, foundNode);
+
+        } else if (content.compareTo(root.word) > 0) {
+
+            System.out.print(root.word + "->");
+            foundNode = search(root.right, content, foundNode);
+
+        } else {
+            foundNode = root;
+        }
+
+        return foundNode;
+    }
+
+    /**
      * Processes the content of input and uses it to create a {@link Node}.
      * @param input Program's input.
      * @return {@link Node} with input's content.
@@ -255,7 +209,7 @@ public class rodrigonascimento_201600155174_dicionario {
     private static Node processInputLine(String input) {
         int spaceIndex;
         String word;
-        int synonymsArrayLength;
+        int numberOfSynonyms;
 
         // Gets the word
         spaceIndex = input.indexOf(" ");
@@ -264,22 +218,22 @@ public class rodrigonascimento_201600155174_dicionario {
 
         // Gets the number of synonyms
         spaceIndex = input.indexOf(" ");
-        synonymsArrayLength = Integer.parseInt(input.substring(0, spaceIndex));
+        numberOfSynonyms = Integer.parseInt(input.substring(0, spaceIndex));
         input = input.substring(spaceIndex + 1);
         
         // Gets the synonyms
-        String[] synonymsArray = new String[synonymsArrayLength];
-        for (int i = 0; i < synonymsArrayLength; i++) {
+        StringBuilder synonyms = new StringBuilder();
+        for (int i = 0; i < numberOfSynonyms; i++) {
             spaceIndex = input.indexOf(" ");
             if (spaceIndex == -1) {
-                synonymsArray[i] = input.trim();
+                synonyms.append(input.trim());
             } else {
-                synonymsArray[i] = input.substring(0, spaceIndex);
+                synonyms.append(input.substring(0, spaceIndex) + ",");
                 input = input.substring(spaceIndex + 1);
             }
         }
 
-        return new Node(word, synonymsArray);
+        return new Node(word, synonyms);
     }
 
     /**
@@ -364,6 +318,22 @@ public class rodrigonascimento_201600155174_dicionario {
             for (int i = 0; i < n; i++) {
                 Node tempNode = processInputLine(reader.readLine());
                 insert(tempNode);
+            }
+
+            // Gets the number of words to be searched
+            n = Integer.parseInt(reader.readLine());
+
+            // Searchs for the words on the tree
+            for (int i = 0; i < n; i++) {
+                System.out.print("[");
+                Node foundNode = search(tree, reader.readLine(), null);
+                if (foundNode == null) {
+                    System.out.println("?]");
+                    System.out.println("-");
+                } else {
+                    System.out.println(foundNode.word + "]");
+                    System.out.println(foundNode.synonyms);
+                }
             }
 
         } catch (Exception ex) {
