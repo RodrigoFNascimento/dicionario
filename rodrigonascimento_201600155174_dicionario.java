@@ -60,8 +60,8 @@ public class rodrigonascimento_201600155174_dicionario {
        
     /**
      * Inserts a new node into a binary tree.
-     * @param root Root of the tree into which the node will be added.
-     * @param newNode Node that will be added to the tree.
+     * @param root      Root of the tree into which the node will be added.
+     * @param newNode   Node that will be added to the tree.
      * @return The tree with the added node.
      */
     private static Node insertToBinaryTree(Node root, Node newNode) { 
@@ -173,12 +173,16 @@ public class rodrigonascimento_201600155174_dicionario {
 
     /**
      * Searchs a binary tree.
-     * @param root Root of the tree.
-     * @param content Content of the desired node.
+     * 
+     * @param root      Root of the tree.
+     * @param content   Content of the desired node.
      * @param foundNode Node found by the search.
+     * @param fileName  Name of the file to which the output will be printed. 
      * @return Node where the content was found.
+     * @throws FileNotFoundException
      */
-    private static Node search(Node root, String content, Node foundNode) {
+    private static Node search(Node root, String content, Node foundNode, String fileName)
+            throws FileNotFoundException {
 
         if (root == null) {
             return null;
@@ -186,13 +190,13 @@ public class rodrigonascimento_201600155174_dicionario {
 
         if (content.compareTo(root.word) < 0) {
 
-            System.out.print(root.word + "->");
-            foundNode = search(root.left, content, foundNode);
+            writeToFile(fileName, root.word + "->");
+            foundNode = search(root.left, content, foundNode, fileName);
 
         } else if (content.compareTo(root.word) > 0) {
 
-            System.out.print(root.word + "->");
-            foundNode = search(root.right, content, foundNode);
+            writeToFile(fileName, root.word + "->");
+            foundNode = search(root.right, content, foundNode, fileName);
 
         } else {
             foundNode = root;
@@ -238,8 +242,8 @@ public class rodrigonascimento_201600155174_dicionario {
 
     /**
      * Writes content to file.
-     * @param fileName Name of the file (with extension) to be writen.
-     * @param content Content to be writen on the file.
+     * @param fileName  Name of the file (with extension) to be writen.
+     * @param content   Content to be writen on the file.
      * @throws FileNotFoundException
      */
     private static void writeToFile(String fileName, String content) throws FileNotFoundException {
@@ -248,7 +252,6 @@ public class rodrigonascimento_201600155174_dicionario {
             BufferedWriter bw = new BufferedWriter(fw);
             PrintWriter out = new PrintWriter(bw))
         {
-            out.println("");
             out.print(content);
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -257,8 +260,8 @@ public class rodrigonascimento_201600155174_dicionario {
 
     /**
      * Writes content to file.
-     * @param fileName Name of the file (with extension) to be writen.
-     * @param content Content to be writen on the file.
+     * @param fileName  Name of the file (with extension) to be writen.
+     * @param content   Content to be writen on the file.
      * @throws FileNotFoundException
      */
     private static void writeToFile(String fileName, StringBuilder content) throws FileNotFoundException {
@@ -267,29 +270,6 @@ public class rodrigonascimento_201600155174_dicionario {
             BufferedWriter bw = new BufferedWriter(fw);
             PrintWriter out = new PrintWriter(bw))
         {
-            out.println("");
-            out.print(content);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    /**
-     * Writes content to file. If the line to be written is the first one,
-     * doesn't add a line break before it, otherwise does.
-     * @param fileName
-     * @param content
-     * @param firstLine
-     * @throws FileNotFoundException
-     */
-    private static void writeToFile(String fileName, String content, boolean firstLine) throws FileNotFoundException {
-
-        try(FileWriter fw = new FileWriter(fileName, true);
-            BufferedWriter bw = new BufferedWriter(fw);
-            PrintWriter out = new PrintWriter(bw))
-        {
-            if (!firstLine)
-                out.println("");
             out.print(content);
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -308,6 +288,8 @@ public class rodrigonascimento_201600155174_dicionario {
     public static void main(String[] args) {
         
         try (FileInputStream inputStream = new FileInputStream(args[0])) {
+
+            emptyFile(args[1]);
             
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
@@ -325,15 +307,19 @@ public class rodrigonascimento_201600155174_dicionario {
 
             // Searchs for the words on the tree
             for (int i = 0; i < n; i++) {
-                System.out.print("[");
-                Node foundNode = search(tree, reader.readLine(), null);
+                writeToFile(args[1], "[");
+                Node foundNode = search(tree, reader.readLine(), null, args[1]);
                 if (foundNode == null) {
-                    System.out.println("?]");
-                    System.out.println("-");
+                    writeToFile(args[1], "?]\n");
+                    writeToFile(args[1], "-");
                 } else {
-                    System.out.println(foundNode.word + "]");
-                    System.out.println(foundNode.synonyms);
+                    writeToFile(args[1], foundNode.word + "]\n");
+                    writeToFile(args[1], foundNode.synonyms);
                 }
+
+                // Prints a line break only if the current line is not the final one
+                if (i < n - 1)
+                    writeToFile(args[1], "\n");
             }
 
         } catch (Exception ex) {
