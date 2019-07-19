@@ -271,8 +271,7 @@ public class rodrigonascimento_201600155174_dicionario {
                 
                 writeToFile(args[1], "[");
                 Node foundNode = search(tree, reader.readLine(), null, args[1]);
-                writeToFile(args[1], foundNode.word + "]\n");
-                writeToFile(args[1], foundNode.synonyms);
+                writeToFile(args[1], foundNode.word + "]\n" + foundNode.synonyms);
 
                 // Prints a line break only if the current line is not the final one
                 if (i < n - 1)
