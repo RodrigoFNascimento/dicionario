@@ -14,7 +14,7 @@
             "type": "java",
             "name": "dicionario",
             "request": "launch",
-            "mainClass": "${file}",
+            "mainClass": "rodrigonascimento_201600155174_dicionario",
             "args": ["dicionario.input", "dicionario.output"]
         }
     ]
