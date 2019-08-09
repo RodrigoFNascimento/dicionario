@@ -13,6 +13,7 @@ class Node {
     public Node left;
     public Node right;
     public int balance;
+    public int height;
 
     public Node() {
         this.word = "?";
@@ -20,6 +21,7 @@ class Node {
         this.left = null;
         this.right = null;
         this.balance = 0;
+        this.height = 1;
     }
 
     public Node(String word, String synonyms) {
@@ -28,20 +30,47 @@ class Node {
         this.left = null;
         this.right = null;
         this.balance = 0;
+        this.height = 1;
     }
 
     /**
      * Calculates the node's balance factor
      */
     public void setBalance() {
-        if (left == null && right == null) {
-            balance = 0;
-        } else if (right == null) {
-            balance = Math.abs(left.balance) - 1;
-        } else if (left == null) {
-            balance = Math.abs(right.balance) + 1;
+        if (left != null && right != null) {
+            balance = right.height - left.height;
+        } else if (left != null) {
+            balance = left.height * -1;
+        } else if (right != null) {
+            balance = right.height;
         } else {
-            balance = left.balance + right.balance;
+            balance = 0;
+        }
+    }
+
+    /**
+     * Calculates the node's height
+     */
+    public void setHeight() {
+
+        if (left != null && right != null) {
+
+            if (left.height > right.height)
+                height = left.height + 1;
+            else
+                height = right.height + 1;
+
+        } else if (left != null) {
+
+            height = left.height + 1;
+
+        } else if (right != null) {
+
+            height = right.height + 1;
+
+        } else {
+
+            height = 1;
         }
     }
 }
@@ -68,7 +97,7 @@ public class rodrigonascimento_201600155174_dicionario {
 
         // If the tree is empty, return a new node
         if (root == null) { 
-            root = newNode; 
+            root = newNode;
             return root; 
         } 
 
@@ -78,6 +107,7 @@ public class rodrigonascimento_201600155174_dicionario {
         else if (newNode.word.compareTo(root.word) > 0) 
             root.right = insertToBinaryTree(root.right, newNode);
 
+        root.setHeight();
         root.setBalance();
 
         root = rotate(root);
@@ -124,7 +154,9 @@ public class rodrigonascimento_201600155174_dicionario {
         axis.left = root;
         root = axis;
 
+        root.left.setHeight();
         root.left.setBalance();
+        root.setHeight();
         root.setBalance();
         return root;
     }
@@ -140,7 +172,9 @@ public class rodrigonascimento_201600155174_dicionario {
         axis.right = root;
         root = axis;
 
+        root.right.setHeight();
         root.right.setBalance();
+        root.setHeight();
         root.setBalance();
         return root;
     }
@@ -153,8 +187,6 @@ public class rodrigonascimento_201600155174_dicionario {
     private static Node rotateLeftRight(Node root) {
         root.left = rotateLeft(root.left);
         root = rotateRight(root);
-
-        root.setBalance();
         return root;
     }
 
@@ -166,8 +198,6 @@ public class rodrigonascimento_201600155174_dicionario {
     private static Node rotateRightLeft(Node root) {
         root.right = rotateRight(root.right);
         root = rotateLeft(root);
-
-        root.setBalance();
         return root;
     }
 
