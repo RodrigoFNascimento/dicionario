@@ -102,7 +102,7 @@ public class rodrigonascimento_201600155174_dicionario {
         } 
 
         // Otherwise, recur down the tree
-        if (newNode.word.compareTo(root.word) < 0) 
+        if (newNode.word.compareTo(root.word) <= 0) 
             root.left = insertToBinaryTree(root.left, newNode);
         else if (newNode.word.compareTo(root.word) > 0) 
             root.right = insertToBinaryTree(root.right, newNode);
@@ -149,6 +149,7 @@ public class rodrigonascimento_201600155174_dicionario {
      * @return Rotated tree.
      */
     private static Node rotateLeft(Node root) {
+
         Node axis = root.right;
         root.right = axis.left;
         axis.left = root;
@@ -167,6 +168,7 @@ public class rodrigonascimento_201600155174_dicionario {
      * @return Rotated tree.
      */
     private static Node rotateRight(Node root) {
+
         Node axis = root.left;
         root.left = axis.right;
         axis.right = root;
@@ -176,7 +178,8 @@ public class rodrigonascimento_201600155174_dicionario {
         root.right.setBalance();
         root.setHeight();
         root.setBalance();
-        return root;
+
+        return root;        
     }
 
     /**
